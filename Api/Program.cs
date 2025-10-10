@@ -12,69 +12,58 @@ namespace Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                ?? "Server=(localdb)\\mssqllocaldb;Database=NätOnNätDb;Trusted_Connection=True;MultipleActiveResultSets=true";
+            var cs = builder.Configuration.GetConnectionString("DefaultConnection")
+                     ?? "Server=localhost;Database=NatOnNatDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+;
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
+            builder.Services.AddDbContext<ApplicationDbContext>(o =>
+                o.UseSqlServer(cs, b => b.MigrationsAssembly("Infrastructure")));
 
-            // Add Identity
-            builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            builder.Services.AddIdentity<IdentityUser, IdentityRole>(o =>
             {
-                options.Password.RequireDigit = true;
-                options.Password.RequiredLength = 6;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireLowercase = true;
+                o.Password.RequireDigit = true;
+                o.Password.RequiredLength = 6;
+                o.Password.RequireNonAlphanumeric = true;
+                o.Password.RequireUppercase = true;
+                o.Password.RequireLowercase = true;
+                o.SignIn.RequireConfirmedAccount = false;
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-            // Add Repositories
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
-            // Add CORS for MVC app
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy("AllowMvcApp",
-                    builder =>
-                    {
-                        builder.WithOrigins("https://localhost:7001", "http://localhost:5001")
-                               .AllowAnyMethod()
-                               .AllowAnyHeader()
-                               .AllowCredentials();
-                    });
+                options.AddPolicy("AllowMvcApp", p =>
+                    p.WithOrigins("https://localhost:7001", "http://localhost:5001")
+                     .AllowAnyHeader()
+                     .AllowAnyMethod());
             });
 
             var app = builder.Build();
 
-            // Ensure database is created and migrated
             using (var scope = app.Services.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                await dbContext.Database.MigrateAsync();
+                var services = scope.ServiceProvider;
+                var db = services.GetRequiredService<ApplicationDbContext>();
+                await db.Database.MigrateAsync();
+                await IdentitySeeder.SeedAsync(services);
             }
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
             }
 
             app.UseHttpsRedirection();
-
             app.UseCors("AllowMvcApp");
-
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.MapControllers();
-
             app.Run();
         }
     }

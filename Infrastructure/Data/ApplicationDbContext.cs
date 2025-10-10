@@ -18,22 +18,8 @@ namespace Infrastructure.Data
             SeedData(modelBuilder);
         }
 
-        private static void SeedData(ModelBuilder builder)
+        static void SeedData(ModelBuilder builder)
         {
-            var hasher = new PasswordHasher<IdentityUser>();
-            var adminUser = new IdentityUser
-            {
-                Id = "admin-user-id-123",
-                UserName = "richard.chalk@admin.se",
-                NormalizedUserName = "RICHARD.CHALK@ADMIN.SE",
-                Email = "richard.chalk@admin.se",
-                NormalizedEmail = "RICHARD.CHALK@ADMIN.SE",
-                EmailConfirmed = true,
-                SecurityStamp = "9b3a3b2f-6d7c-4b0a-9f2d-3c2c1a1f0e9d"
-            };
-            adminUser.PasswordHash = hasher.HashPassword(adminUser, "Abc123#");
-            builder.Entity<IdentityUser>().HasData(adminUser);
-
             var products = new[]
             {
                 new ProductBuilder().WithId(1).WithName("MacBook Pro 16\"").WithDescription("Kraftfull laptop med M3 Max-chip, 36GB RAM och 1TB SSD").WithPrice(34990m).WithCategory("Laptops").WithImageUrl("https://picsum.photos/640/480?random=1").WithStockQuantity(15).AsFavorite(true).WithCreatedDate(new DateTime(2025, 9, 10)).Build(),
