@@ -14,10 +14,15 @@ namespace Api
             var builder = WebApplication.CreateBuilder(args);
 
             var cs = builder.Configuration.GetConnectionString("DefaultConnection")
-                     ?? "Server=localhost;Database=NatOnNatDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
+                     ?? "Server=localhost;Database=NatOnNatDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Connect Timeout=60";
 
             builder.Services.AddDbContext<ApplicationDbContext>(o =>
-                o.UseSqlServer(cs, b => b.MigrationsAssembly("Infrastructure")));
+                o.UseSqlServer(cs, b =>
+                {
+                    b.MigrationsAssembly("Infrastructure");
+                    b.CommandTimeout(180);
+                    b.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null);
+                }));
 
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(o =>
             {
@@ -46,19 +51,7 @@ namespace Api
 
             var app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var db = services.GetRequiredService<ApplicationDbContext>();
-                try
-                {
-                    await db.Database.MigrateAsync();
-                }
-                catch (SqlException ex) when (ex.Number == 1801)
-                {
-                }
-                await IdentitySeeder.SeedAsync(services);
-            }
+            await MigrateAndSeedAsync(app);
 
             if (app.Environment.IsDevelopment())
             {
@@ -73,6 +66,25 @@ namespace Api
             app.UseAuthorization();
             app.MapControllers();
             await app.RunAsync();
+        }
+
+        static async Task MigrateAndSeedAsync(IHost app)
+        {
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var db = services.GetRequiredService<ApplicationDbContext>();
+            var strategy = db.Database.CreateExecutionStrategy();
+            await strategy.ExecuteAsync(async () =>
+            {
+                try
+                {
+                    await db.Database.MigrateAsync();
+                }
+                catch (SqlException ex) when (ex.Number == 1801)
+                {
+                }
+                await IdentitySeeder.SeedAsync(services);
+            });
         }
     }
 }
