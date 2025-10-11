@@ -1,12 +1,19 @@
-{
-  "profiles": [
-    {
-      "name": "MultipleStartupProjects",
-      "projects": [
-        { "path": "Api\\Api.csproj", "action": "Start", "launchProfile": "Api" },
-        { "path": "Console\\Console.csproj", "action": "Start" },
-        { "path": "Web\\Web.csproj", "action": "Start", "launchProfile": "https" }
-      ]
-    }
-  ]
-}
+[
+  {
+    "Name": "MultipleStartupProjects",
+    "Projects": [
+      {
+        "Path": "Api\\Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Console\\Console.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Web\\Web.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
