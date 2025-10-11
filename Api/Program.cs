@@ -13,8 +13,7 @@ namespace Api
             var builder = WebApplication.CreateBuilder(args);
 
             var cs = builder.Configuration.GetConnectionString("DefaultConnection")
-                     ?? "Server=localhost;Database=NatOnNatDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
-;
+                     ?? "Server=localhost;Database=NatOnNatDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True";
 
             builder.Services.AddDbContext<ApplicationDbContext>(o =>
                 o.UseSqlServer(cs, b => b.MigrationsAssembly("Infrastructure")));
@@ -46,13 +45,13 @@ namespace Api
 
             var app = builder.Build();
 
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var services = scope.ServiceProvider;
-            //    var db = services.GetRequiredService<ApplicationDbContext>();
-            //    await db.Database.MigrateAsync();
-            //    await IdentitySeeder.SeedAsync(services);
-            //}
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var db = services.GetRequiredService<ApplicationDbContext>();
+                await db.Database.MigrateAsync();
+                await IdentitySeeder.SeedAsync(services);
+            }
 
             if (app.Environment.IsDevelopment())
             {
@@ -64,7 +63,7 @@ namespace Api
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
-            app.Run();
+            await app.RunAsync();
         }
     }
 }
