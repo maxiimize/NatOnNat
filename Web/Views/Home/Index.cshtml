@@ -41,7 +41,9 @@
                                 <i class="bi bi-star-fill"></i> Favorit
                             </span>
                         }
-                        <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name">
+                        <div class="img-container">
+                            <img src="@product.ImageUrl" alt="@product.Name">
+                        </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">@product.Name</h5>
                             <p class="card-text text-muted small">@product.Description</p>
@@ -87,7 +89,9 @@
                                 <i class="bi bi-lightning-charge"></i> Ny!
                             </span>
                         }
-                        <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name">
+                        <div class="img-container">
+                            <img src="@product.ImageUrl" alt="@product.Name">
+                        </div>
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title">@product.Name</h5>
                             <p class="card-text text-muted small">@product.Description</p>
@@ -128,7 +132,9 @@
                         {
                             <span class="product-badge badge bg-info">Ny!</span>
                         }
-                        <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name" style="height: 150px;">
+                        <div class="img-container" style="height: 150px;">
+                            <img src="@product.ImageUrl" alt="@product.Name">
+                        </div>
                         <div class="card-body d-flex flex-column">
                             <h6 class="card-title">@product.Name</h6>
                             <p class="card-text text-muted small text-truncate">@product.Description</p>
@@ -191,7 +197,7 @@
         // Add to cart animation
         document.querySelectorAll('.btn-primary').forEach(btn => {
             btn.addEventListener('click', function(e) {
-                if (!this.disabled) {
+                if (!this.disabled && !this.id?.includes('subscribe')) {
                     const originalText = this.innerHTML;
                     this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Lägger till...';
                     setTimeout(() => {
@@ -227,6 +233,36 @@
     </script>
 
     <style>
+        /* Additional product card styles for better hover effect */
+        .product-card {
+            position: relative;
+            isolation: isolate;
+        }
+
+            .product-card .img-container {
+                position: relative;
+                overflow: hidden;
+                background: #f8f9fa;
+                flex-shrink: 0;
+            }
+
+            .product-card .card-body {
+                position: relative;
+                background: white;
+                z-index: 1;
+                flex: 1;
+            }
+
+        /* Ensure hover effect doesn't affect neighboring cards */
+        .row > [class*='col-'] {
+            position: relative;
+            z-index: 1;
+        }
+
+            .row > [class*='col-']:hover {
+                z-index: 10;
+            }
+
         .feature-box {
             transition: transform 0.3s ease;
         }
@@ -242,19 +278,34 @@
         .hero-section {
             animation: slideDown 0.8s ease-out;
         }
+
         @@keyframes slideDown {
-            from
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
 
-        {
-            opacity: 0;
-            transform: translateY(-30px);
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        to {
-            opacity: 1;
-            transform: translateY(0);
+        /* Product grid spacing fix */
+        .product-card {
+            margin-bottom: 0 !important;
         }
 
+        /* Smooth transitions for all interactive elements */
+        .btn {
+            transition: all 0.3s ease;
+        }
+
+        /* Prevent text overflow in small cards */
+        .product-card .card-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     </style>
 }
