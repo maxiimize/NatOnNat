@@ -1,7 +1,9 @@
+using System.Data.Common;
 using Domain.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace Api
@@ -13,11 +15,15 @@ namespace Api
             var builder = WebApplication.CreateBuilder(args);
 
             var cs = builder.Configuration.GetConnectionString("DefaultConnection")
-                     ?? "Server=localhost;Database=NatOnNatDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
-;
+                     ?? "Server=localhost;Database=NatOnNatDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Connect Timeout=30";
 
             builder.Services.AddDbContext<ApplicationDbContext>(o =>
-                o.UseSqlServer(cs, b => b.MigrationsAssembly("Infrastructure")));
+                o.UseSqlServer(cs, b =>
+                {
+                    b.MigrationsAssembly("Infrastructure");
+                    b.CommandTimeout(60);
+                    b.EnableRetryOnFailure(3, TimeSpan.FromSeconds(2), null);
+                }));
 
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(o =>
             {
@@ -46,25 +52,62 @@ namespace Api
 
             var app = builder.Build();
 
-            //using (var scope = app.Services.CreateScope())
-            //{
-            //    var services = scope.ServiceProvider;
-            //    var db = services.GetRequiredService<ApplicationDbContext>();
-            //    await db.Database.MigrateAsync();
-            //    await IdentitySeeder.SeedAsync(services);
-            //}
+            await MigrateAndSeedAsync(app);
 
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
             }
 
+            app.MapGet("/healthz", () => Results.Ok("OK"));
+
             app.UseHttpsRedirection();
             app.UseCors("AllowMvcApp");
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
-            app.Run();
+            await app.RunAsync();
+        }
+
+        static async Task MigrateAndSeedAsync(IHost app)
+        {
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+            var db = services.GetRequiredService<ApplicationDbContext>();
+            await WarmSqlAsync(db.Database.GetDbConnection());
+            var strategy = db.Database.CreateExecutionStrategy();
+            await strategy.ExecuteAsync(async () =>
+            {
+                var pending = await db.Database.GetPendingMigrationsAsync();
+                if (pending.Any())
+                {
+                    try
+                    {
+                        await db.Database.MigrateAsync();
+                    }
+                    catch (SqlException ex) when (ex.Number == 1801)
+                    {
+                    }
+                }
+                await IdentitySeeder.SeedAsync(services);
+            });
+        }
+
+        static async Task WarmSqlAsync(DbConnection connection)
+        {
+            for (var i = 0; i < 10; i++)
+            {
+                try
+                {
+                    await connection.OpenAsync();
+                    await connection.CloseAsync();
+                    return;
+                }
+                catch
+                {
+                    await Task.Delay(300 * (i + 1));
+                }
+            }
         }
     }
 }
