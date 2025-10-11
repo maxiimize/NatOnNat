@@ -120,6 +120,8 @@ Migrering körs automatiskt när applikationen startar första gången.
 
 ##  Databas
 
+- NatOnNatDb (SQL Server)
+
 ### Seedade Produkter
 Systemet innehåller 11 förkonfigurerade produkter:
 - MacBook Pro 16"
@@ -139,7 +141,6 @@ Systemet innehåller 11 förkonfigurerade produkter:
 "Server=localhost;Database=NatOnNatDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
 ```
 
-##  Säkerhet
 
 ### Input Validering
 - Alla användarinput valideras både på klient- och serversidan
@@ -151,13 +152,17 @@ Systemet innehåller 11 förkonfigurerade produkter:
 - Lösenordskrav: minst 6 tecken, siffror, versaler, gemener och specialtecken
 - Säker lösenordshasning
 
-##  Prestanda
 
 ### Optimeringar
 - Asynkrona databasanrop
 - Lazy loading för bilder
 - Responsiv bildstorlek
 - Effektiv caching av statiska resurser
+
+
+### Framtida Funktioner
+
+- Det finns flera knappar och snabblänkar på Landing Page som ej har någon funktion för tillfället. Dessa är reserverade för framtida utveckling.
 
 
 ##  Licens
