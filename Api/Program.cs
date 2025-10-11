@@ -46,13 +46,13 @@ namespace Api
 
             var app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var db = services.GetRequiredService<ApplicationDbContext>();
-                await db.Database.MigrateAsync();
-                await IdentitySeeder.SeedAsync(services);
-            }
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
+            //    var db = services.GetRequiredService<ApplicationDbContext>();
+            //    await db.Database.MigrateAsync();
+            //    await IdentitySeeder.SeedAsync(services);
+            //}
 
             if (app.Environment.IsDevelopment())
             {
