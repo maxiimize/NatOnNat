@@ -2,8 +2,8 @@ using Domain.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace Api
 {
@@ -64,6 +64,8 @@ namespace Api
             {
                 app.MapOpenApi();
             }
+
+            app.MapGet("/healthz", () => Results.Ok("OK"));
 
             app.UseHttpsRedirection();
             app.UseCors("AllowMvcApp");
