@@ -1,9 +1,9 @@
 # NätOnNät E-Commerce Platform
 
-## ?? Översikt
+##  Översikt
 NätOnNät är en modern e-handelsplattform byggd med .NET 9 och Clean Architecture-principer. Systemet består av en Web API, en MVC-webbapplikation och en administrativ konsollapplikation.
 
-## ??? Arkitektur
+##  Arkitektur
 
 ### Clean Architecture
 Projektet följer Clean Architecture med följande lager:
@@ -29,7 +29,7 @@ Projektet följer Clean Architecture med följande lager:
 - **MVC** (`NätOnNät.web/`): Responsiv webbapplikation
 - **Console** (`Console/`): Administrationsverktyg
 
-## ??? Teknisk Stack
+##  Teknisk Stack
 
 ### Backend
 - **.NET 9** - Senaste .NET-ramverket
@@ -44,7 +44,7 @@ Projektet följer Clean Architecture med följande lager:
 - **Vanilla JavaScript** - Interaktivitet
 - **Mobile First Design** - Responsiv design
 
-## ?? Design Patterns & Principer
+##  Design Patterns & Principer
 
 ### Design Patterns
 1. **Builder Pattern** - För att skapa Product-objekt på ett strukturerat sätt
@@ -65,7 +65,7 @@ Projektet följer Clean Architecture med följande lager:
 - **Async/Await** - Asynkrona databasanrop
 - **Mobile First** - Responsiv design för mobila enheter
 
-## ?? Funktioner
+##  Funktioner
 
 ### Web API
 - `GET /api/products` - Hämta alla produkter
@@ -87,7 +87,7 @@ Projektet följer Clean Architecture med följande lager:
 - Lagerstatistik och sammanfattning
 - Färgkodad output för bättre läsbarhet
 
-## ?? Installation & Körning
+##  Installation & Körning
 
 ### Förutsättningar
 - .NET 9 SDK
@@ -101,17 +101,24 @@ Projektet följer Clean Architecture med följande lager:
 2. **Skapa databas (körs automatiskt vid start)**
 Migrering körs automatiskt när applikationen startar första gången.
 
-3. **Starta applikationerna**
+3.  **VIKTIGT**: Välj alltid antingen "MultipleStartupProjects" eller "New Profile" som Startup Project för att applikationen ska köras korrekt.
+
+4. **Starta applikationerna**
 
 ### Startup Order
-?? **VIKTIGT**: Starta alltid API:et först eftersom MVC-applikationen är beroende av den!
 
-## ?? Förkonfigurerad Admin-användare
+1. API
+
+2. Console
+
+3. Web App
+
+##  Förkonfigurerad Admin-användare
 
 - **Email**: richard.chalk@admin.se
 - **Lösenord**: Abc123#
 
-## ?? Databas
+##  Databas
 
 ### Seedade Produkter
 Systemet innehåller 11 förkonfigurerade produkter:
@@ -132,7 +139,7 @@ Systemet innehåller 11 förkonfigurerade produkter:
 "Server=localhost;Database=NatOnNatDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
 ```
 
-## ?? Säkerhet
+##  Säkerhet
 
 ### Input Validering
 - Alla användarinput valideras både på klient- och serversidan
@@ -144,7 +151,7 @@ Systemet innehåller 11 förkonfigurerade produkter:
 - Lösenordskrav: minst 6 tecken, siffror, versaler, gemener och specialtecken
 - Säker lösenordshasning
 
-## ?? Prestanda
+##  Prestanda
 
 ### Optimeringar
 - Asynkrona databasanrop
@@ -153,14 +160,14 @@ Systemet innehåller 11 förkonfigurerade produkter:
 - Effektiv caching av statiska resurser
 
 
-## ?? Licens
+##  Licens
 
 Detta projekt är skapat för utbildningssyfte.
 
-## ????? Utvecklare
+##  Utvecklare
 
 Utvecklat som del av en utbildningsuppgift inom .NET-utveckling.
 
 ---
 
-**NätOnNät** - *Din pålitliga teknikbutik online* ??
+**NätOnNät** - *Din pålitliga teknikbutik online* 
