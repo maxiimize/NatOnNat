@@ -3,6 +3,7 @@ using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 
 namespace Api
 {
@@ -49,7 +50,13 @@ namespace Api
             {
                 var services = scope.ServiceProvider;
                 var db = services.GetRequiredService<ApplicationDbContext>();
-                await db.Database.MigrateAsync();
+                try
+                {
+                    await db.Database.MigrateAsync();
+                }
+                catch (SqlException ex) when (ex.Number == 1801)
+                {
+                }
                 await IdentitySeeder.SeedAsync(services);
             }
 
