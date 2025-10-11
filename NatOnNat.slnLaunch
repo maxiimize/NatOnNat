@@ -1,0 +1,19 @@
+[
+  {
+    "Name": "MultipleStartupProjects",
+    "Projects": [
+      {
+        "Path": "Api\\Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Console\\Console.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Web\\Web.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
