@@ -1,3 +1,4 @@
+using System.Data.Common;
 using Domain.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
@@ -14,14 +15,14 @@ namespace Api
             var builder = WebApplication.CreateBuilder(args);
 
             var cs = builder.Configuration.GetConnectionString("DefaultConnection")
-                     ?? "Server=localhost;Database=NatOnNatDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Connect Timeout=60";
+                     ?? "Server=localhost;Database=NatOnNatDb;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True;Connect Timeout=30";
 
             builder.Services.AddDbContext<ApplicationDbContext>(o =>
                 o.UseSqlServer(cs, b =>
                 {
                     b.MigrationsAssembly("Infrastructure");
-                    b.CommandTimeout(180);
-                    b.EnableRetryOnFailure(5, TimeSpan.FromSeconds(5), null);
+                    b.CommandTimeout(60);
+                    b.EnableRetryOnFailure(3, TimeSpan.FromSeconds(2), null);
                 }));
 
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(o =>
@@ -73,18 +74,40 @@ namespace Api
             using var scope = app.Services.CreateScope();
             var services = scope.ServiceProvider;
             var db = services.GetRequiredService<ApplicationDbContext>();
+            await WarmSqlAsync(db.Database.GetDbConnection());
             var strategy = db.Database.CreateExecutionStrategy();
             await strategy.ExecuteAsync(async () =>
             {
-                try
+                var pending = await db.Database.GetPendingMigrationsAsync();
+                if (pending.Any())
                 {
-                    await db.Database.MigrateAsync();
-                }
-                catch (SqlException ex) when (ex.Number == 1801)
-                {
+                    try
+                    {
+                        await db.Database.MigrateAsync();
+                    }
+                    catch (SqlException ex) when (ex.Number == 1801)
+                    {
+                    }
                 }
                 await IdentitySeeder.SeedAsync(services);
             });
+        }
+
+        static async Task WarmSqlAsync(DbConnection connection)
+        {
+            for (var i = 0; i < 10; i++)
+            {
+                try
+                {
+                    await connection.OpenAsync();
+                    await connection.CloseAsync();
+                    return;
+                }
+                catch
+                {
+                    await Task.Delay(300 * (i + 1));
+                }
+            }
         }
     }
 }
