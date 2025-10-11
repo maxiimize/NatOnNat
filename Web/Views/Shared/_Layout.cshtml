@@ -67,7 +67,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Product Card Styles */
+        /* Improved Product Card Styles */
         .product-card {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
@@ -76,15 +76,27 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
             height: 100%;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .product-card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-10px) scale(1.02);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+        }
+
+        /* Image container to prevent overflow */
+        .product-card .img-container {
+            position: relative;
+            overflow: hidden;
+            height: 200px;
+            background: #f8f9fa;
         }
 
         .product-card img {
-            height: 200px;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             transition: transform 0.5s ease;
         }
@@ -145,6 +157,51 @@
             to { width: 50px; }
         }
 
+        /* Newsletter Form Styles */
+        .newsletter-form {
+            position: relative;
+        }
+
+        .newsletter-input {
+            transition: border-color 0.3s ease;
+        }
+
+        .newsletter-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(0, 102, 204, 0.25);
+        }
+
+        .newsletter-input.is-invalid {
+            border-color: #dc3545;
+        }
+
+        .newsletter-input.is-valid {
+            border-color: #28a745;
+        }
+
+        .email-feedback {
+            display: none;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+        }
+
+        .email-feedback.invalid-feedback {
+            color: #dc3545;
+            display: block;
+        }
+
+        .email-feedback.valid-feedback {
+            color: #28a745;
+            display: block;
+        }
+
+        .newsletter-success {
+            display: none;
+            color: #28a745;
+            margin-top: 0.5rem;
+            animation: fadeIn 0.5s ease;
+        }
+
         /* Footer */
         footer {
             background: rgba(26, 26, 26, 0.95);
@@ -174,6 +231,7 @@
             }
             .product-card { margin-bottom: 20px; }
             .section-header h2 { font-size: 1.5rem; }
+            .product-card .img-container { height: 150px; }
         }
 
         /* Loading Animation */
@@ -251,10 +309,23 @@
                 <div class="col-md-4">
                     <h5><i class="bi bi-envelope"></i> Nyhetsbrev</h5>
                     <p>Prenumerera för att få de senaste erbjudandena!</p>
-                    <div class="input-group">
-                        <input type="email" class="form-control" placeholder="Din e-post">
-                        <button class="btn btn-primary" type="button">Prenumerera</button>
-                    </div>
+                    <form id="newsletterForm" class="newsletter-form">
+                        <div class="input-group">
+                            <input type="email" 
+                                   id="newsletterEmail" 
+                                   class="form-control newsletter-input" 
+                                   placeholder="Din e-post"
+                                   required>
+                            <button class="btn btn-primary" type="submit" id="subscribeBtn">
+                                <span class="btn-text">Prenumerera</span>
+                                <span class="loading-spinner" style="display: none;"></span>
+                            </button>
+                        </div>
+                        <div class="email-feedback"></div>
+                        <div class="newsletter-success">
+                            <i class="bi bi-check-circle"></i> Tack för din prenumeration!
+                        </div>
+                    </form>
                 </div>
             </div>
             <hr class="my-4" style="border-color: rgba(255,255,255,0.2);">
@@ -271,6 +342,84 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Email validation and newsletter subscription
+        document.addEventListener('DOMContentLoaded', function() {
+            const newsletterForm = document.getElementById('newsletterForm');
+            const emailInput = document.getElementById('newsletterEmail');
+            const feedback = document.querySelector('.email-feedback');
+            const successMessage = document.querySelector('.newsletter-success');
+            const subscribeBtn = document.getElementById('subscribeBtn');
+            const btnText = subscribeBtn.querySelector('.btn-text');
+            const spinner = subscribeBtn.querySelector('.loading-spinner');
+            
+            // Email validation regex
+                const emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+        
+            // Real-time validation
+            emailInput.addEventListener('input', function() {
+                const email = this.value.trim();
+                
+                if (email === '') {
+                    this.classList.remove('is-valid', 'is-invalid');
+                    feedback.className = 'email-feedback';
+                    feedback.textContent = '';
+                } else if (emailRegex.test(email)) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                    feedback.className = 'email-feedback valid-feedback';
+                    feedback.innerHTML = '<i class="bi bi-check-circle"></i> Giltig e-postadress';
+                } else {
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                    feedback.className = 'email-feedback invalid-feedback';
+                    feedback.innerHTML = '<i class="bi bi-exclamation-circle"></i> Ange en giltig e-postadress (t.ex. namn@example.com)';
+                }
+            });
+            
+            // Form submission
+            newsletterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = emailInput.value.trim();
+                
+                if (!emailRegex.test(email)) {
+                    emailInput.classList.add('is-invalid');
+                    feedback.className = 'email-feedback invalid-feedback';
+                    feedback.innerHTML = '<i class="bi bi-exclamation-circle"></i> Vänligen ange en giltig e-postadress';
+                    emailInput.focus();
+                    return;
+                }
+                
+                // Show loading state
+                btnText.style.display = 'none';
+                spinner.style.display = 'inline-block';
+                subscribeBtn.disabled = true;
+                
+                // Simulate API call
+                setTimeout(function() {
+                    // Hide loading state
+                    btnText.style.display = 'inline';
+                    spinner.style.display = 'none';
+                    subscribeBtn.disabled = false;
+                    
+                    // Show success message
+                    emailInput.value = '';
+                    emailInput.classList.remove('is-valid', 'is-invalid');
+                    feedback.className = 'email-feedback';
+                    feedback.textContent = '';
+                    successMessage.style.display = 'block';
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(function() {
+                        successMessage.style.display = 'none';
+                    }, 5000);
+                }, 1500);
+            });
+        });
+    </script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
