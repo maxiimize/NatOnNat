@@ -1,109 +1,109 @@
-# NätOnNät E-Commerce Platform
+# NÃ¤tOnNÃ¤t E-Commerce Platform
 
-##  Översikt
-NätOnNät är en modern e-handelsplattform byggd med .NET 9 och Clean Architecture-principer. Systemet består av en Web API, en MVC-webbapplikation och en administrativ konsollapplikation.
+##  Overview
+NÃ¤tOnNÃ¤t is a modern e-commerce platform built with .NET 9 and Clean Architecture principles. The system consists of a Web API, an MVC web application, and an administrative console application.
 
-##  Arkitektur
+##  Architecture
 
 ### Clean Architecture
-Projektet följer Clean Architecture med följande lager:
+The project follows Clean Architecture with the following layers:
 
 #### **Domain Layer** (`Domain/`)
-- Innehåller affärsentiteter och gränssnitt
-- Ingen beroende på andra lager
-- Implementerar Builder Pattern för Product-entiteten
+- Contains business entities and interfaces
+- No dependencies on other layers
+- Implements Builder Pattern for the Product entity
 
 #### **Infrastructure Layer** (`Infrastructure/`)
-- Data Access Layer med Entity Framework Core
+- Data Access Layer with Entity Framework Core
 - Repository Pattern implementation
-- Identity-hantering med ASP.NET Core Identity
-- SQL Server databaskoppling
+- Identity management with ASP.NET Core Identity
+- SQL Server database connection
 
 #### **Application Layer** (`Application/`)
-- Services och DTOs
-- Affärslogik och orchestrering
-- HTTPClient-integration för API-anrop
+- Services and DTOs
+- Business logic and orchestration
+- HTTPClient integration for API calls
 
 #### **Presentation Layer** 
 - **API** (`Api/`): RESTful Web API
-- **MVC** (`NätOnNät.web/`): Responsiv webbapplikation
-- **Console** (`Console/`): Administrationsverktyg
+- **MVC** (`NÃ¤tOnNÃ¤t.web/`): Responsive web application
+- **Console** (`Console/`): Administration tool
 
-##  Teknisk Stack
+##  Technical Stack
 
 ### Backend
-- **.NET 9** - Senaste .NET-ramverket
+- **.NET 9** - Latest .NET framework
 - **ASP.NET Core** - Web framework
-- **Entity Framework Core 9** - ORM för databashantering
-- **SQL Server** - Databas
-- **ASP.NET Core Identity** - Autentisering och auktorisering
+- **Entity Framework Core 9** - ORM for database management
+- **SQL Server** - Database
+- **ASP.NET Core Identity** - Authentication and authorization
 
 ### Frontend
 - **Bootstrap 5.3** - CSS framework
-- **Bootstrap Icons** - Ikonbibliotek
-- **Vanilla JavaScript** - Interaktivitet
-- **Mobile First Design** - Responsiv design
+- **Bootstrap Icons** - Icon library
+- **Vanilla JavaScript** - Interactivity
+- **Mobile First Design** - Responsive design
 
-##  Design Patterns & Principer
+##  Design Patterns & Principles
 
 ### Design Patterns
-1. **Builder Pattern** - För att skapa Product-objekt på ett strukturerat sätt
-2. **Repository Pattern** - Abstraktion av dataåtkomst
-3. **Dependency Injection** - Löst kopplade komponenter
-4. **Service Pattern** - Affärslogik separerad från controllers
+1. **Builder Pattern** - For creating Product objects in a structured way
+2. **Repository Pattern** - Abstraction of data access
+3. **Dependency Injection** - Loosely coupled components
+4. **Service Pattern** - Business logic separated from controllers
 
-### SOLID-principer
-- **Single Responsibility** - Varje klass har ett tydligt ansvar
-- **Open/Closed** - Öppen för utökning, stängd för modifiering
-- **Liskov Substitution** - Interfaces kan ersätta implementationer
-- **Interface Segregation** - Små, specifika interfaces
-- **Dependency Inversion** - Beroenden genom abstraktioner
+### SOLID Principles
+- **Single Responsibility** - Each class has a clear responsibility
+- **Open/Closed** - Open for extension, closed for modification
+- **Liskov Substitution** - Interfaces can replace implementations
+- **Interface Segregation** - Small, specific interfaces
+- **Dependency Inversion** - Dependencies through abstractions
 
-### Övriga principer
-- **DRY (Don't Repeat Yourself)** - Återanvändbar kod
-- **Clean Code** - Läsbar och underhållbar kod
-- **Async/Await** - Asynkrona databasanrop
-- **Mobile First** - Responsiv design för mobila enheter
+### Other Principles
+- **DRY (Don't Repeat Yourself)** - Reusable code
+- **Clean Code** - Readable and maintainable code
+- **Async/Await** - Asynchronous database calls
+- **Mobile First** - Responsive design for mobile devices
 
-##  Funktioner
+##  Features
 
 ### Web API
-- `GET /api/products` - Hämta alla produkter
-- `GET /api/products/favorites` - Hämta favoritprodukter
-- `GET /api/products/newest` - Hämta nyaste produkter
-- `GET /api/products/{id}` - Hämta specifik produkt
+- `GET /api/products` - Retrieve all products
+- `GET /api/products/favorites` - Retrieve favorite products
+- `GET /api/products/newest` - Retrieve newest products
+- `GET /api/products/{id}` - Retrieve specific product
 
-### MVC Webbapplikation
-- **Landing Page** - Modern SPA-liknande startsida
-- **Produktvisning** - Tre sektioner: Favoriter, Nyheter, Alla produkter
-- **Väderwidget** - Realtidsväder i navigationen via extern API
-- **Responsiv Design** - Fungerar på alla enheter
-- **Animationer** - Smooth transitions och hover-effekter
-- **Identity Integration** - Inloggning och registrering
+### MVC Web Application
+- **Landing Page** - Modern SPA-like homepage
+- **Product Display** - Three sections: Favorites, New Arrivals, All Products
+- **Weather Widget** - Real-time weather in navigation via external API
+- **Responsive Design** - Works on all devices
+- **Animations** - Smooth transitions and hover effects
+- **Identity Integration** - Login and registration
 
 ### Console Application
-- Visa alla registrerade användare
-- Visa komplett produktkatalog i tabellformat
-- Lagerstatistik och sammanfattning
-- Färgkodad output för bättre läsbarhet
+- Display all registered users
+- Display complete product catalog in table format
+- Inventory statistics and summary
+- Color-coded output for better readability
 
-##  Installation & Körning
+##  Installation & Setup
 
-### Förutsättningar
+### Prerequisites
 - .NET 9 SDK
-- SQL Server (LocalDB fungerar)
-- Visual Studio 2022 eller VS Code
+- SQL Server (LocalDB works)
+- Visual Studio 2022 or VS Code
 
-### Steg-för-steg
+### Step-by-step
 
-1. **Klona repository**
+1. **Clone repository**
 
-2. **Skapa databas (körs automatiskt vid start)**
-Migrering körs automatiskt när applikationen startar första gången.
+2. **Create database (runs automatically at startup)**
+Migration runs automatically when the application starts for the first time.
 
-3.  **VIKTIGT**: Välj alltid antingen "MultipleStartupProjects" eller "New Profile" som Startup Project för att applikationen ska köras korrekt.
+3.  **IMPORTANT**: Always select either "MultipleStartupProjects" or "New Profile" as Startup Project for the application to run correctly.
 
-4. **Starta applikationerna**
+4. **Start the applications**
 
 ### Startup Order
 
@@ -113,17 +113,17 @@ Migrering körs automatiskt när applikationen startar första gången.
 
 3. Web App
 
-##  Förkonfigurerad Admin-användare
+##  Pre-configured Admin User
 
 - **Email**: richard.chalk@admin.se
-- **Lösenord**: Abc123#
+- **Password**: Abc123#
 
-##  Databas
+##  Database
 
 - NatOnNatDb (SQL Server)
 
-### Seedade Produkter
-Systemet innehåller 11 förkonfigurerade produkter:
+### Seeded Products
+The system contains 11 pre-configured products:
 - MacBook Pro 16"
 - iPhone 15 Pro Max
 - Sony WH-1000XM5
@@ -142,37 +142,37 @@ Systemet innehåller 11 förkonfigurerade produkter:
 ```
 
 
-### Input Validering
-- Alla användarinput valideras både på klient- och serversidan
-- Parameteriserade SQL-frågor via Entity Framework
-- XSS-skydd genom Razor-syntax
+### Input Validation
+- All user input is validated on both client and server side
+- Parameterized SQL queries via Entity Framework
+- XSS protection through Razor syntax
 
-### Autentisering
-- ASP.NET Core Identity för säker användarhantering
-- Lösenordskrav: minst 6 tecken, siffror, versaler, gemener och specialtecken
-- Säker lösenordshasning
-
-
-### Optimeringar
-- Asynkrona databasanrop
-- Lazy loading för bilder
-- Responsiv bildstorlek
-- Effektiv caching av statiska resurser
+### Authentication
+- ASP.NET Core Identity for secure user management
+- Password requirements: at least 6 characters, numbers, uppercase, lowercase and special characters
+- Secure password hashing
 
 
-### Framtida Funktioner
+### Optimizations
+- Asynchronous database calls
+- Lazy loading for images
+- Responsive image sizing
+- Efficient caching of static resources
 
-- Det finns flera knappar och snabblänkar på Landing Page som ej har någon funktion för tillfället. Dessa är reserverade för framtida utveckling.
+
+### Future Features
+
+- There are several buttons and quick links on the Landing Page that currently have no functionality. These are reserved for future development.
 
 
-##  Licens
+##  License
 
-Detta projekt är skapat för utbildningssyfte.
+This project was created for educational purposes.
 
-##  Utvecklare
+##  Developer
 
-Utvecklat som del av en utbildningsuppgift inom .NET-utveckling.
+Developed as part of an educational assignment in .NET development.
 
 ---
 
-**NätOnNät** - *Din pålitliga teknikbutik online* 
+**NÃ¤tOnNÃ¤t** - *Your reliable tech store online*
